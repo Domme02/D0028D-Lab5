@@ -1,0 +1,21 @@
+defaults:
+  snmp_version: "v2c" # or "v3"
+  timeout_s: 2.5 # per request
+  retries: 1 # retry only on timeouts
+  target_budget_s: 10 # max total time per target
+  oids:
+    - "sysUpTime.0"
+    - "sysName.0"
+
+targets:
+  - name: "device_name"
+    ip: "172.16.0.240"
+    community: "public"
+    oids:
+    - "ifOperStatus.1"
+    
+  - name: "router2"
+    ip: "10.0.0.2"
+    community: "public"
+    oids:
+    - "sysName.0"
