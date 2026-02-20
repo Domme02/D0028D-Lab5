@@ -1,33 +1,41 @@
 import yaml
+import argparse
+import subprocess
+import json
+import datetime
+import logging
+import pathlib
+import sys
+
+# Added exit codes as const variables.
+OK = 0
+PARTIAL = 1
+FAILURE = 2
 
 def load_config(path):
     
     try:
         with open(path, "r", encoding="utf-8") as yml:
             cfg_data = yaml.safe_load(yml)
+            
+            # Empty file or only comments/whitespaces.
+            if cfg_data is None:
+                print("Config file is empty.")
+                sys.exit(FAILURE)
+            
+            # Checks for incorrect format of data.
             if not isinstance(cfg_data, dict):
-                raise TypeError("YAML root must be a dictionary")
+                print("Config root must be a dictionary.")
+                sys.exit(FAILURE)
+
             return cfg_data
 
+    # Handles errors with wrong user input
     except FileNotFoundError:
         print("Error: File not found.")
+        sys.exit(FAILURE)
+    
+    # Handles permission errors.
     except PermissionError:
         print("Error: Permission denied.")
-    except yaml.YAMLError as e:
-        print(f"YAML parsing error: {e}")
-    except TypeError as e:
-        print("Type error: {e}")
-
-    return 2
-    
-#def validate_config(cfg):
-    
-
-
-
-print(load_config("config2.yml"))
-
-
-
-# {'defaults': {'snmp_version': 'v2c', 'timeout_s': 2.5, 'retries': 1, 'target_budget_s': 10, 'oids': ['sysUpTime.0', 'sysName.0']}, 'targets': [{'name': 'device_name', 'ip': '172.16.0.240', 'community': 'public', 'oids': ['ifOperStatus.1']}, {'name': 'router2', 'ip': '10.0.0.2', 'community': 'public', 'oids': ['sysName.0']}]}
-
+        sys.exit(FAILURE)
