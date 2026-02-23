@@ -53,6 +53,7 @@ def validate_config(cfg):
     
     default_validation = ["snmp_version", "timeout_s", "retries", "target_budget_s", "oids"]
     targets_validation = ["name", "ip", "community", "oids"]
+    print(cfg["targets"])
     
     # For loop, looping through each section of the configuration file.
     for section in cfg:
@@ -62,6 +63,11 @@ def validate_config(cfg):
             for key in default_validation:
                 if key not in cfg[section]:
                     logging.warning("%s must be present in the default configuration", key)
+                
+                # Validating that keys do not have non-empty values.
+                if not cfg[section][key]:
+                    logging.warning("%s must have a value in the configuration file", key)
+                
 
         # Checking presence of certain keys in section "targets"
         if section == "targets":
@@ -69,7 +75,10 @@ def validate_config(cfg):
                 for key in targets_validation:
                     if key not in targets_list:
                         logging.warning("target=%s: %s must be present in the configuration file", targets_list["name"] ,key)
-
+                    
+                    # Validating that keys do not have non-empty values.
+                    if not targets_list[key]:
+                        logging.warning("%s must have a value in the configuration file", key)
         
  
 
@@ -98,7 +107,6 @@ def main():
     datefmt = "%Y-%m-%d %H:%M:%S"
     logfile = "logs.txt"
 
-    logger = logging.getLogger("poller")
     logging.basicConfig(format=fmt, datefmt=datefmt, filename=logfile, encoding="utf-8", level=numeric_level)
 
     cfg = load_config(cfg_path)
