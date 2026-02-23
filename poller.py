@@ -51,9 +51,10 @@ def load_config(path):
 
 def validate_config(cfg):
     
+    
     default_validation = ["snmp_version", "timeout_s", "retries", "target_budget_s", "oids"]
     targets_validation = ["name", "ip", "community", "oids"]
-    print(cfg["targets"])
+    datatype_validation = {"snmp_version":str, "timeout_s":int, "retries":int, "target_budget_s":(int, float), "oids":list, "name":str, "ip":str, "community":str}
     
     # For loop, looping through each section of the configuration file.
     for section in cfg:
@@ -63,10 +64,15 @@ def validate_config(cfg):
             for key in default_validation:
                 if key not in cfg[section]:
                     logging.warning("%s must be present in the default configuration", key)
+                    continue
                 
-                # Validating that keys do not have non-empty values.
+                # Validating that keys do not have empty values.
                 if not cfg[section][key]:
                     logging.warning("%s must have a value in the configuration file", key)
+
+                # Validating values data types of the keys.
+                if not isinstance(cfg[section][key], datatype_validation[key]):
+                    logging.warning("%s must be a %s in the configuration file", key, datatype_validation[key])
                 
 
         # Checking presence of certain keys in section "targets"
@@ -75,10 +81,16 @@ def validate_config(cfg):
                 for key in targets_validation:
                     if key not in targets_list:
                         logging.warning("target=%s: %s must be present in the configuration file", targets_list["name"] ,key)
+                        continue
                     
-                    # Validating that keys do not have non-empty values.
+                    # Validating that keys do not have empty values.
                     if not targets_list[key]:
                         logging.warning("%s must have a value in the configuration file", key)
+
+                    # Validating values data types of the keys.
+                    if not isinstance(targets_list[key], datatype_validation[key]):
+                        logging.warning("%s must be a %s in the configuration file", key, datatype_validation[key])
+
         
  
 
