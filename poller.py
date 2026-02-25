@@ -91,11 +91,47 @@ def validate_config(cfg):
         
  
 
-def merge_defaults(defaults, target):
-    pass
+def merge_defaults(defaults, targets):
+    
+    targets_list = []
+    
+    for target in targets:
+        
+        target_configuration = {
+        "name": target["name"], 
+        "snmp_version": defaults["snmp_version"], 
+        "timeout_s": defaults["timeout_s"], 
+        "retries": defaults["retries"],
+        "target_budget_s": defaults["target_budget_s"],
+        "oids": defaults["oids"],
+        "ip": target["ip"],
+        "community": target["community"],
+        "oids": target["oids"]
+        }
 
-def build_snmpget_cmd(target, oid):
-    pass
+        targets_list.append(target_configuration)
+
+    return targets_list
+        
+
+def build_snmpget_cmd(targets_configuration):
+    
+    # Empty list to append commands to when they are built.
+    snmp_commands = []
+
+    # Going through each targets configuration, and each oid for the target, and builds the snmpget command and appends it to the snmp_commands list.
+    for target in targets_configuration:
+        for oid in target["oids"]:
+            
+            # Takes care of v2c, as command is different depending on the version of snmp used.
+            if target["snmp_version"] == "v2c":
+                cmd = f"snmp -{target["snmp_version"]} -c {target["community"]} {target["ip"]} {oid}"
+                snmp_commands.append(cmd)
+
+            # Future support for V3
+            # if target["snmp_version"] == "v3":
+
+    return snmp_commands
 
 def run_snmpget(cmd, timeout_s):
     pass
@@ -119,7 +155,7 @@ def main():
     logging.basicConfig(format=fmt, datefmt=datefmt, filename=logfile, encoding="utf-8", level=numeric_level)
 
     cfg = load_config(cfg_path)
-    validate_config(cfg)
+    build_snmpget_cmd(merge_defaults(cfg["defaults"], cfg["targets"]))
 
 if __name__ == "__main__":
     main()
