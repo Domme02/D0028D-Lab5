@@ -8,14 +8,14 @@ defaults:
     - "sysName.0"
 
 targets:
-  - name: "device_name"
+  - name: "B314_Switch_Dominic"
     ip: "172.16.0.240"
-    community: "public"
+    community: "B314"
     oids:
     - "ifOperStatus.1"
     
-  - name: "router2"
-    ip: "10.0.0.2"
+  - name: "B314_Switch_LinnAmanda"
+    ip: "172.16.0.253"
     community: "public"
     oids:
     - "sysName.0"
