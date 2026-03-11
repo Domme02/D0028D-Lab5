@@ -20,13 +20,13 @@ pip install pyyaml
 
 ```bash
 # Output to a file
-python poller.py --config config.yml --out out.json
+python3 poller.py --config config.yml --out out.json
 
 # Output to stdout, with INFO logging
-python poller.py --config config.yml --out - --log-level INFO
+python3 poller.py --config config.yml --out - --log-level INFO
 
 # Only show warnings and errors
-python poller.py --config config.yml --out - --log-level WARNING
+python3 poller.py --config config.yml --out - --log-level WARNING
 ```
 
 ---
